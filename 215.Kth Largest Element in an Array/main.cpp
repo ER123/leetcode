@@ -37,3 +37,45 @@ public:
         return left;
     }
 };
+//方法三：首先对前K个数构建一个小顶堆，再跟之后的值比较，如果大于堆顶将堆顶替换，调整堆，如果小于堆顶继续；
+class Solution {
+public:
+    int findKthLargest(vector<int>& nums, int k) {
+        vector<int> Kmax;
+        Kmax.resize(k);
+        for(int i = 0; i < k; i++){
+            Kmax[i] = nums[i];
+        }
+        HeapBulid(Kmax, k);
+        int len_nums = nums.size();
+        for (int i = k; i < len_nums; i++){
+            if(nums[i] < Kmax[0])
+                continue;
+            Kmax[0] = nums[i];
+            AdjustHeap(Kmax, 0,k);
+        }
+        return Kmax[0];
+    }
+    void HeapBulid(vector<int>& Kmax, int k){
+        for(int i = k/2 - 1; i >= 0; i--){
+            AdjustHeap(Kmax, i, k);
+        }
+    }
+    void AdjustHeap(vector<int>& Kmax, int i, int k){
+        int left = i*2+1;
+        int right = i*2+2;
+        int min = i;
+        if(left < k && Kmax[left] < Kmax[min]){
+            min = left;
+        }
+        if(right < k && Kmax[right] < Kmax[min]){
+            min = right;
+        }
+        if(min != i){
+            int temp = Kmax[min];
+            Kmax[min] = Kmax[i];
+            Kmax[i] = temp;
+            AdjustHeap(Kmax, min, k);
+        }
+    }
+};
